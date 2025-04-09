@@ -1,4 +1,3 @@
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -13,7 +12,7 @@ import java.util.Scanner;
 
 /**
  *
- * @author Nikita Neveditsin
+ * @author Vats Upadhyay (A00454163)
  */
 public class Summary {
 
@@ -23,13 +22,12 @@ public class Summary {
      * Downloads a file from the specified URL and saves it to the given output
      * file.
      *
-     * @param link    The URL of the file to be downloaded.
+     * @param link The URL of the file to be downloaded.
      * @param outFile The path where the downloaded file should be saved.
-     * @throws IOException          If an I/O error occurs while reading from the
-     *                              URL or
-     *                              writing to the file.
+     * @throws IOException If an I/O error occurs while reading from the URL or
+     * writing to the file.
      * @throws InterruptedException If the operation is interrupted while
-     *                              waiting for the HTTP response.
+     * waiting for the HTTP response.
      */
     public static void downloadFile(String link, String outFile) throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
@@ -56,18 +54,23 @@ public class Summary {
      */
     public static List<Person> readCSV(String fileName) throws FileNotFoundException {
         List<Person> people = new ArrayList<>();
-        
+
         // Use Scanner to read the file
-        try (Scanner scanner = new Scanner(new File(fileName))) {
-            // Skip the header
-            if (scanner.hasNextLine()) {
-                scanner.nextLine();
+        try (Scanner kbd = new Scanner(new File(fileName))) {
+            
+            if (kbd.hasNextLine()) {
+                kbd.nextLine();
             }
 
             // Read data line by line and create Person objects
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
+            while (kbd.hasNextLine()) {
+                String line = kbd.nextLine();
                 String[] fields = line.split(",");
+                // Check if the line has the expected number of fields
+                if (fields.length < 5) {
+                    System.out.println("Skipping line due to insufficient fields: " + line);
+                    continue; // Skip this line
+                }
                 String name = fields[0];
                 String sex = fields[1];
                 int age = Integer.parseInt(fields[2]);
@@ -113,49 +116,54 @@ public class Summary {
                 .filter(p -> p.getSex().equalsIgnoreCase("F"))
                 .min((p1, p2) -> Double.compare(p1.getHeight(), p2.getHeight()))
                 .orElse(null);
-        System.out.println("Shortest female: " + (shortestFemale != null ? shortestFemale.getName() : "N/A"));
+        
+        if (shortestFemale != null) { //simple if else 
+            System.out.println("Shortest female: " + shortestFemale.getName());
+        } else {
+            System.out.println("Shortest female: N/A");
+        }
     }
 
     /**
      * Prints the details of each person.
      */
     public static void printDetails(List<Person> people) {
-        for (Person person : people) {
+        for (Person person : people) { //enhanced for loop 
             System.out.println(person);
         }
     }
 
-
     public static void main(String[] args) throws IOException {
+        if (args.length == 0) {
+            System.out.println("No command provided.");
+            return; 
+        }
 
-        switch (args[0]) {
+        switch (args[0]) {  //simple switch statement
             case "download": {
                 try {
                     downloadFile(URL, args[1]);
+                    System.out.println("Downloaded successfully: " + args[1]);
                 } catch (InterruptedException ex) {
                     System.out.println(ex);
                 }
+                break;
             }
-            System.out.println("Downloaded successully: " + args[1]);
-            break;
 
             case "summary":
-                //TODO
-                
+                List<Person> people = readCSV(args[1]);
+                printSummary(people);
                 break;
 
             case "print":
-                //TODO
-
+                List<Person> peopleForPrint = readCSV(args[1]);
+                printDetails(peopleForPrint);
                 break;
             default:
                 System.out.println("Unknown command");
-
         }
-
     }
 
 }
-                                      
-                
-                
+//creates a new people.csv file 
+//end of program

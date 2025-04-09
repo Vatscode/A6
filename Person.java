@@ -1,4 +1,4 @@
-
+import java.util.Comparator;
 /**
  * A class representing a person -- suitable for extending into interesting
  * kinds of people -- like students or truck-drivers.
@@ -19,7 +19,7 @@ public class Person {
      * Create a Person with the given name and other details.
      *
      * @param name this Person's name
-     * @param sex this Person's sex (e.g., "M" or "F")
+     * @param sex this Person's sex 
      * @param age this Person's age
      * @param height this Person's height
      * @param weight this Person's weight
@@ -99,7 +99,7 @@ public class Person {
      */
     public void writeOutput() {
         System.out.println("Name: " + name + ", Sex: " + sex + ", Age: " + age + ", Height: " + height + ", Weight: " + weight);
-
+    //simple string formatting here
     }
 
     /**
@@ -120,7 +120,7 @@ public class Person {
      *
      * @return a String with this Person's name.
      */
-    @Override
+    @Override //toString method
     public String toString() {
         return "Person: " + name + ", " + sex + ", " + age + ", " + height + ", " + weight;
 
@@ -156,3 +156,4 @@ public class Person {
     };
 
 }
+//end of program
