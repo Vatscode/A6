@@ -167,5 +167,4 @@ public class Summary {
     }
 
 }
-//creates a new people.csv file 
 //end of program
