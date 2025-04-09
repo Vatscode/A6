@@ -3,15 +3,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Scanner;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  *
@@ -50,6 +48,80 @@ public class Summary {
         } else {
             throw new IOException("Failed to download file, HTTP response code: "
                     + response.statusCode());
+        }
+    }
+
+    /**
+     * Reads the CSV file and returns a list of Person objects.
+     */
+    public static List<Person> readCSV(String fileName) throws FileNotFoundException {
+        List<Person> people = new ArrayList<>();
+        
+        // Use Scanner to read the file
+        try (Scanner scanner = new Scanner(new File(fileName))) {
+            // Skip the header
+            if (scanner.hasNextLine()) {
+                scanner.nextLine();
+            }
+
+            // Read data line by line and create Person objects
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                String[] fields = line.split(",");
+                String name = fields[0];
+                String sex = fields[1];
+                int age = Integer.parseInt(fields[2]);
+                double height = Double.parseDouble(fields[3]);
+                double weight = Double.parseDouble(fields[4]);
+                people.add(new Person(name, sex, age, height, weight));
+            }
+        }
+
+        return people;
+    }
+
+    /**
+     * Prints the summary statistics for the data.
+     */
+    public static void printSummary(List<Person> people) {
+        if (people.isEmpty()) {
+            System.out.println("No data available.");
+            return;
+        }
+
+        // Total number of records (excluding the header)
+        System.out.println("Total number of records: " + people.size());
+
+        // Youngest person
+        Person youngest = people.stream().min((p1, p2) -> Integer.compare(p1.getAge(), p2.getAge())).orElse(null);
+        System.out.println("Youngest person: " + (youngest != null ? youngest.getName() : "N/A"));
+
+        // Oldest person
+        Person oldest = people.stream().max((p1, p2) -> Integer.compare(p1.getAge(), p2.getAge())).orElse(null);
+        System.out.println("Oldest person: " + (oldest != null ? oldest.getName() : "N/A"));
+
+        // Average age
+        double averageAge = people.stream().mapToInt(Person::getAge).average().orElse(0);
+        System.out.println("Average age: " + averageAge);
+
+        // Tallest person
+        Person tallest = people.stream().max((p1, p2) -> Double.compare(p1.getHeight(), p2.getHeight())).orElse(null);
+        System.out.println("Tallest person: " + (tallest != null ? tallest.getName() : "N/A"));
+
+        // Shortest female
+        Person shortestFemale = people.stream()
+                .filter(p -> p.getSex().equalsIgnoreCase("F"))
+                .min((p1, p2) -> Double.compare(p1.getHeight(), p2.getHeight()))
+                .orElse(null);
+        System.out.println("Shortest female: " + (shortestFemale != null ? shortestFemale.getName() : "N/A"));
+    }
+
+    /**
+     * Prints the details of each person.
+     */
+    public static void printDetails(List<Person> people) {
+        for (Person person : people) {
+            System.out.println(person);
         }
     }
 
